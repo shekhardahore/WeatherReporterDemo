@@ -9,8 +9,8 @@
 import UIKit
 
 protocol AlertDisplayable {
-    func displayAlert(with title: String, message: String)
-    func displaySettingsAlert(with title: String, message: String)
+    func displayAlertWith(title: String, message: String)
+    func displaySettingsAlertWith(title: String, message: String)
 }
 
 extension AlertDisplayable where Self: UIViewController {
@@ -19,7 +19,7 @@ extension AlertDisplayable where Self: UIViewController {
     /// - Parameters:
     ///   - title: title of alert
     ///   - message: message of alert
-    func displayAlert(with title: String, message: String) {
+    func displayAlertWith(title: String, message: String) {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
         let okAction = UIAlertAction(title: "Ok", style: .cancel, handler: nil)
@@ -33,7 +33,7 @@ extension AlertDisplayable where Self: UIViewController {
     /// - Parameters:
     ///   - title: title of alert
     ///   - message: message of alert
-    func displaySettingsAlert(with title: String, message: String) {
+    func displaySettingsAlertWith(title: String, message: String) {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         let settingsAction = UIAlertAction(title: "Open Settings", style: .destructive) { (_) -> Void in

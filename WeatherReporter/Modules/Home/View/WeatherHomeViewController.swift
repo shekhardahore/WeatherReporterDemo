@@ -7,17 +7,11 @@
 //
 
 import UIKit
-import CoreLocation
 
 class WeatherHomeViewController: UIViewController, AlertDisplayable {
-    
-    let locationManager: CLLocationManager = {
-        let manager = CLLocationManager()
-        manager.desiredAccuracy = kCLLocationAccuracyKilometer
-        return manager
-    }()
 
     var viewModel: WeatherHomeViewModel
+    var locationServiceManager: LocationService
     var activityIndicator: UIActivityIndicatorView = {
         let activityIndicator = UIActivityIndicatorView(style: .medium)
         activityIndicator.hidesWhenStopped = true
@@ -40,8 +34,9 @@ class WeatherHomeViewController: UIViewController, AlertDisplayable {
         return tableView
     }()
     
-    init(viewModel: WeatherHomeViewModel) {
+    init(viewModel: WeatherHomeViewModel, locationServiceManager: LocationService) {
         self.viewModel = viewModel
+        self.locationServiceManager = locationServiceManager
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -51,30 +46,13 @@ class WeatherHomeViewController: UIViewController, AlertDisplayable {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        locationManager.delegate = self
+        locationServiceManager.delegate = self
+        locationServiceManager.retriveCurrentLocation()
+        setupDefaultUI()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupDefaultUI()
-        retriveCurrentLocation()
-    }
-    
-    /// Requests for current location if available
-    func retriveCurrentLocation(){
-        let status = CLLocationManager.authorizationStatus()
-        if status == .denied || status == .restricted || !CLLocationManager.locationServicesEnabled() {
-            DispatchQueue.main.async { [weak self] in
-                self?.displaySettingsAlert(with: "Location Error".localizedString, message: "We need your location. Please make sure in the Settings app you have given us permission to use your location details.".localizedString)
-                self?.activityIndicator.stopAnimating()
-                return
-            }
-        }
-        if status == .notDetermined {
-            locationManager.requestWhenInUseAuthorization()
-            return
-        }
-        locationManager.requestLocation()
     }
     
     /// Sets up the default UI
@@ -114,7 +92,7 @@ class WeatherHomeViewController: UIViewController, AlertDisplayable {
             guard success else {
                 DispatchQueue.main.async { [weak self] in
                     self?.activityIndicator.stopAnimating()
-                    self?.displayAlert(with: "Error".localizedString, message: error ?? "")
+                    self?.displayAlertWith(title: "Error".localizedString, message: error ?? "")
                 }
                 return
             }
@@ -130,21 +108,12 @@ class WeatherHomeViewController: UIViewController, AlertDisplayable {
     }
 }
 
-extension WeatherHomeViewController: CLLocationManagerDelegate {
-    
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        if(status == .authorizedWhenInUse || status == .authorizedAlways){
-            manager.requestLocation()
-        }
+extension WeatherHomeViewController: LocationServiceDelegate {
+    func didFetchLocation(latitude: String, longitude: String) {
+        fetchWeather(latitude: latitude, longitude: longitude)
     }
     
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {    }
-    
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let location = locations.first {
-            let latitude = "\(location.coordinate.latitude)"
-            let longitude = "\(location.coordinate.longitude)"
-            fetchWeather(latitude: latitude, longitude: longitude)
-        }
+    func failedToFetchLocation(error: String) {
+        displaySettingsAlertWith(title: "Location Error".localizedString, message: error.localizedString)
     }
 }
