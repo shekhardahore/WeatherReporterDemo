@@ -12,6 +12,7 @@ class WeatherHomeViewController: UIViewController, AlertDisplayable {
 
     var viewModel: WeatherHomeViewModel
     var locationServiceManager: LocationService
+    var refreshControl = UIRefreshControl()
     var activityIndicator: UIActivityIndicatorView = {
         let activityIndicator = UIActivityIndicatorView(style: .medium)
         activityIndicator.hidesWhenStopped = true
@@ -70,6 +71,8 @@ class WeatherHomeViewController: UIViewController, AlertDisplayable {
     /// Sets up the table view once data is avaliable
     func setupWeatherUI() {
         view.addSubview(tableView)
+        refreshControl.addTarget(self, action: #selector(self.refresh(_:)), for: .valueChanged)
+        tableView.addSubview(refreshControl)
         activityIndicator.center = view.center
         tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         tableView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
@@ -106,14 +109,22 @@ class WeatherHomeViewController: UIViewController, AlertDisplayable {
             }
         }
     }
+    
+    @objc func refresh(_ sender: AnyObject) {
+        locationServiceManager.retriveCurrentLocation()
+    }
+
 }
 
 extension WeatherHomeViewController: LocationServiceDelegate {
     func didFetchLocation(latitude: String, longitude: String) {
+        refreshControl.endRefreshing()
         fetchWeather(latitude: latitude, longitude: longitude)
     }
     
     func failedToFetchLocation(error: String) {
+        self.activityIndicator.stopAnimating()
+        refreshControl.endRefreshing()
         displaySettingsAlertWith(title: "Location Error".localizedString, message: error.localizedString)
     }
 }
