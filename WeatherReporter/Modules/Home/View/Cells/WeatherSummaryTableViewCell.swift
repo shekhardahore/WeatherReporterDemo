@@ -56,6 +56,7 @@ class WeatherSummaryTableViewCell: UITableViewCell, Reusable {
     
     func setupUI() {
         
+        selectionStyle = .none
         contentView.addSubview(lblSummary)
         contentView.addSubview(lblTemperature)
         contentView.addSubview(lblDate)

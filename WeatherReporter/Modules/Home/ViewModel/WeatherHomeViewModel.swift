@@ -25,7 +25,7 @@ final class WeatherHomeViewModel {
     ///   - longitude: longitude of the loaction
     ///   - completionHandler: completion handler to update view of result
     func fetchWeatherForCurrentLocation(latitude: String, logintude: String, _ completionHandler : @escaping CompletionHandler){
-        provider.request(.getWeather(latitude: latitude, longitude: latitude)) { [unowned self] (result) in
+        provider.request(.getWeather(latitude: latitude, longitude: logintude)) { [unowned self] (result) in
             switch result {
             case .success(let response):
                 do {

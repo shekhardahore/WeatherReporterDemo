@@ -10,7 +10,7 @@ import Foundation
 
 struct Currently: Codable {
     let time: Int?
-    let summary, icon: String?
+    let summary, icon, precipType: String?
     let precipIntensity, precipProbability: Double?
     let temperature, apparentTemperature, dewPoint, humidity: Double?
     let pressure, windSpeed, windGust: Double?

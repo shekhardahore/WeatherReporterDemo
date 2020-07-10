@@ -43,7 +43,8 @@ final class WeatherDetailViewModel: WeatherViewModelItem {
             guard let precipPercentage = model.currently?.precipProbabilityPercentage else {
                 throw WRErrors.valueNotFound
             }
-            titleText = "CHANCE OF RAIN".localizedString
+            let precipType = model.currently?.precipType ?? "RAIN"
+            titleText = "CHANCE OF \(precipType.uppercased())".localizedString
             valueText = "\(precipPercentage)%"
         }
     }

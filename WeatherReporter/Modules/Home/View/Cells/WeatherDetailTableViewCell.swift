@@ -49,6 +49,7 @@ class WeatherDetailTableViewCell: UITableViewCell, Reusable {
     
     func setupUI() {
         
+        selectionStyle = .none
         contentView.addSubview(lblTitle)
         contentView.addSubview(lblValue)
         
