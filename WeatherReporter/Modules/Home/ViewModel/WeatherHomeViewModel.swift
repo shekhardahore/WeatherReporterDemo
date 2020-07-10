@@ -13,30 +13,43 @@ typealias CompletionHandler = (Bool,String?)->()
 
 final class WeatherHomeViewModel {
     let provider: MoyaProvider<WeatherReporterService>
-    var weatherModel: Weather?
-    
-    init (_ provider: MoyaProvider<WeatherReporterService>) {
+    var locationServiceManager: LocationService
+    var weatherModel: Weather? {
+        didSet {
+            self.weatherUpdated?()
+        }
+    }
+    var alertMessage: String? {
+        didSet {
+            self.showAlertClosure?()
+        }
+    }
+    var showAlertClosure: (()->())?
+    var weatherUpdated: (()->())?
+
+    init(provider: MoyaProvider<WeatherReporterService>, locationServiceManager: LocationService) {
         self.provider = provider
+        self.locationServiceManager = locationServiceManager
+        locationServiceManager.delegate = self
     }
     
-    /// Fetchs weather for given location.
-    /// - Parameters:
-    ///   - latitude: latitude of the location
-    ///   - longitude: longitude of the loaction
-    ///   - completionHandler: completion handler to update view of result
-    func fetchWeatherForCurrentLocation(latitude: String, logintude: String, _ completionHandler : @escaping CompletionHandler){
-        provider.request(.getWeather(latitude: latitude, longitude: logintude)) { [unowned self] (result) in
+    /// Fetchs weather user's current location.
+    func fetchWeatherForCurrentLocation() {
+        locationServiceManager.retriveCurrentLocation()
+    }
+    
+    func fetchWeatherFor(latitude: String, longitude: String) {
+        provider.request(.getWeather(latitude: latitude, longitude: longitude)) { [unowned self] (result) in
             switch result {
             case .success(let response):
                 do {
                     let weather = try JSONDecoder().decode(Weather.self, from: response.data)
                     self.weatherModel = weather
-                    completionHandler(true, nil)
-                } catch let jsonError {
-                    completionHandler(false, jsonError.localizedDescription)
+                } catch {
+                    self.alertMessage = ErrorMessages.dataParsing
                 }
-            case .failure(let error):
-                completionHandler(false, error.errorDescription)
+            case .failure(_):
+                self.alertMessage = ErrorMessages.serverFailed
             }
         }
     }
@@ -71,5 +84,15 @@ final class WeatherHomeViewModel {
         }
 
         return detailsViewModels
+    }
+}
+
+extension WeatherHomeViewModel: LocationServiceDelegate {
+    func didFetchLocation(latitude: String, longitude: String) {
+        fetchWeatherFor(latitude: latitude, longitude: longitude)
+    }
+    
+    func failedToFetchLocation(error: String) {
+        alertMessage = error.localizedString
     }
 }

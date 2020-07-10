@@ -11,7 +11,6 @@ import UIKit
 class WeatherHomeViewController: UIViewController, AlertDisplayable {
 
     var viewModel: WeatherHomeViewModel
-    var locationServiceManager: LocationService
     var refreshControl = UIRefreshControl()
     var activityIndicator: UIActivityIndicatorView = {
         let activityIndicator = UIActivityIndicatorView(style: .medium)
@@ -35,9 +34,8 @@ class WeatherHomeViewController: UIViewController, AlertDisplayable {
         return tableView
     }()
     
-    init(viewModel: WeatherHomeViewModel, locationServiceManager: LocationService) {
+    init(viewModel: WeatherHomeViewModel) {
         self.viewModel = viewModel
-        self.locationServiceManager = locationServiceManager
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -47,9 +45,20 @@ class WeatherHomeViewController: UIViewController, AlertDisplayable {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        locationServiceManager.delegate = self
-        locationServiceManager.retriveCurrentLocation()
         setupDefaultUI()
+        viewModel.weatherUpdated = { [weak self] () in
+            guard let `self` = self else {
+                return
+            }
+            self.activityIndicator.stopAnimating()
+            self.setupWeatherUI()
+            self.showWeather()
+        }
+        viewModel.showAlertClosure = { [weak self] () in
+            self?.activityIndicator.stopAnimating()
+            self?.displayAlertWith(title: "Error".localizedString, message: self?.viewModel.alertMessage ?? "")
+        }
+        viewModel.fetchWeatherForCurrentLocation()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -63,7 +72,6 @@ class WeatherHomeViewController: UIViewController, AlertDisplayable {
         activityIndicator.startAnimating()
         view.addSubview(activityIndicator)
         view.addSubview(infoLable)
-        
         infoLable.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         infoLable.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -32).isActive = true
     }
@@ -84,47 +92,8 @@ class WeatherHomeViewController: UIViewController, AlertDisplayable {
     func showWeather() {
         tableView.data = viewModel.getDisplayViewModels()
     }
-
-    /// Fetches weather details from server and updates the viewModel
-    ///
-    /// - Parameters:
-    ///   - latitude: latitude of the location
-    ///   - longitude: longitude of the loaction
-    func fetchWeather(latitude: String, longitude: String) {
-        viewModel.fetchWeatherForCurrentLocation(latitude: latitude, logintude: longitude) { (success, error) in
-            guard success else {
-                DispatchQueue.main.async { [weak self] in
-                    self?.activityIndicator.stopAnimating()
-                    self?.displayAlertWith(title: "Error".localizedString, message: error ?? "")
-                }
-                return
-            }
-            DispatchQueue.main.async { [weak self] in
-                guard let `self` = self else {
-                    return
-                }
-                self.activityIndicator.stopAnimating()
-                self.setupWeatherUI()
-                self.showWeather()
-            }
-        }
-    }
     
     @objc func refresh(_ sender: AnyObject) {
-        locationServiceManager.retriveCurrentLocation()
-    }
-
-}
-
-extension WeatherHomeViewController: LocationServiceDelegate {
-    func didFetchLocation(latitude: String, longitude: String) {
-        refreshControl.endRefreshing()
-        fetchWeather(latitude: latitude, longitude: longitude)
-    }
-    
-    func failedToFetchLocation(error: String) {
-        self.activityIndicator.stopAnimating()
-        refreshControl.endRefreshing()
-        displaySettingsAlertWith(title: "Location Error".localizedString, message: error.localizedString)
+        viewModel.fetchWeatherForCurrentLocation()
     }
 }

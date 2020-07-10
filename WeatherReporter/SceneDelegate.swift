@@ -20,7 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         //If UITesting, than use stub for moya provider
         let provider = ProcessInfo.processInfo.arguments.contains("UITesting") ? MoyaProvider<WeatherReporterService>(stubClosure: MoyaProvider.immediatelyStub) : MoyaProvider<WeatherReporterService>()
-        let weatherHomeViewController : WeatherHomeViewController = WeatherHomeViewController(viewModel: WeatherHomeViewModel(provider), locationServiceManager: LocationService())        
+        let weatherHomeViewController : WeatherHomeViewController = WeatherHomeViewController(viewModel: WeatherHomeViewModel(provider: provider, locationServiceManager: LocationService()))
         window?.rootViewController = weatherHomeViewController
         window?.makeKeyAndVisible()
         return

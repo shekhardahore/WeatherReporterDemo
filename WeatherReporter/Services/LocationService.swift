@@ -28,7 +28,7 @@ class LocationService: NSObject {
         let status = CLLocationManager.authorizationStatus()
         if status == .denied || status == .restricted || !CLLocationManager.locationServicesEnabled() {
             DispatchQueue.main.async { [weak self] in
-                self?.delegate?.failedToFetchLocation(error: "We need your location. Please make sure in the Settings app you have given us permission to use your location details.".localizedString)
+                self?.delegate?.failedToFetchLocation(error: ErrorMessages.locationServiceDiabled)
                 return
             }
         }
@@ -50,7 +50,12 @@ extension LocationService: CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        
+        if let error = error as? CLError, error.code == .denied {
+            DispatchQueue.main.async { [weak self] in
+                self?.delegate?.failedToFetchLocation(error: ErrorMessages.locationServiceDiabled)
+                return
+            }
+        }
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {

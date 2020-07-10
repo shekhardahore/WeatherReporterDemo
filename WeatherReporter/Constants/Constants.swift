@@ -24,3 +24,10 @@ extension WRErrors: LocalizedError {
         }
     }
 }
+
+struct ErrorMessages {
+    static let locationServiceDiabled = "We need your location. Please make sure in the Settings app you have given us permission to use your location details."
+    static let dataParsing = "Cannot parse data.Please try again later."
+    static let serverFailed = "There seems to be an issue with the service. Please try again."
+
+}
