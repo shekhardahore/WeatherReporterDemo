@@ -9,14 +9,14 @@
 import Foundation
 import Moya
 
-typealias CompletionHandler = (Bool,String?)->()
-
-final class WeatherHomeViewModel {
+class WeatherHomeViewModel {
     let provider: MoyaProvider<WeatherReporterService>
     var locationServiceManager: LocationService
+    var weatherTableViewViewModel: WeatherTableViewViewModel
     var weatherModel: Weather? {
         didSet {
             self.weatherUpdated?()
+            self.weatherTableViewViewModel.weatherModel = self.weatherModel
         }
     }
     var alertMessage: String? {
@@ -30,6 +30,8 @@ final class WeatherHomeViewModel {
     init(provider: MoyaProvider<WeatherReporterService>, locationServiceManager: LocationService) {
         self.provider = provider
         self.locationServiceManager = locationServiceManager
+        self.weatherTableViewViewModel = WeatherTableViewViewModel()
+        weatherTableViewViewModel.weatherHomeViewModelDelegate = self
         locationServiceManager.delegate = self
     }
     
@@ -53,38 +55,6 @@ final class WeatherHomeViewModel {
             }
         }
     }
-    
-    /// Generates viewmodel for the WeatherTableView
-    /// - Returns: array of contating viewmodel for WeatherTableView
-    func getDisplayViewModels() -> [[WeatherViewModelItem]] {
-        var displayViewModels: [[WeatherViewModelItem]] = [[]]
-        guard let weather = weatherModel else {
-            return displayViewModels
-        }
-        let summaryModel = WeatherSummaryViewModel(data: weather)
-        displayViewModels.append([summaryModel])
-        displayViewModels.append(getDetailsViewModels())
-        return displayViewModels
-    }
-    
-    /// Generates viewmodel for the deatils section in WeatherTableView
-    /// - Returns: array of contating viewmodel for the details section in WeatherTableView
-    private func getDetailsViewModels() -> [WeatherViewModelItem] {
-        var detailsViewModels: [WeatherViewModelItem] = []
-        guard let weather = weatherModel else {
-            return detailsViewModels
-        }
-        for type in WeatherDetailType.allCases {
-            do {
-                let model = try WeatherDetailViewModel(type: type, model: weather)
-                detailsViewModels.append(model)
-            } catch let error {
-                assertionFailure("\(error.localizedDescription): \(type) ")
-            }
-        }
-
-        return detailsViewModels
-    }
 }
 
 extension WeatherHomeViewModel: LocationServiceDelegate {
@@ -94,5 +64,11 @@ extension WeatherHomeViewModel: LocationServiceDelegate {
     
     func failedToFetchLocation(error: String) {
         alertMessage = error.localizedString
+    }
+}
+
+extension WeatherHomeViewModel: WeatherHomeViewModelDelegate {
+    func updateWeatherData() {
+        fetchWeatherForCurrentLocation()
     }
 }

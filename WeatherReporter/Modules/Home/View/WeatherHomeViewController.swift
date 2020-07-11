@@ -11,7 +11,6 @@ import UIKit
 class WeatherHomeViewController: UIViewController, AlertDisplayable {
 
     var viewModel: WeatherHomeViewModel
-    var refreshControl = UIRefreshControl()
     var activityIndicator: UIActivityIndicatorView = {
         let activityIndicator = UIActivityIndicatorView(style: .medium)
         activityIndicator.hidesWhenStopped = true
@@ -26,16 +25,11 @@ class WeatherHomeViewController: UIViewController, AlertDisplayable {
         label.text = "Waiting for location...".localizedString
         return label
     }()
-    var tableView: WeatherTableView = {
-        let tableView = WeatherTableView(frame: .zero, style: .plain)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.insetsContentViewsToSafeArea = true
-        tableView.tableFooterView = UIView()
-        return tableView
-    }()
+    var tableView: WeatherTableView
     
     init(viewModel: WeatherHomeViewModel) {
         self.viewModel = viewModel
+        self.tableView = WeatherTableView(viewModel: self.viewModel.weatherTableViewViewModel)
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -45,55 +39,41 @@ class WeatherHomeViewController: UIViewController, AlertDisplayable {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupDefaultUI()
+        setupUI()
         viewModel.weatherUpdated = { [weak self] () in
             guard let `self` = self else {
                 return
             }
             self.activityIndicator.stopAnimating()
-            self.setupWeatherUI()
             self.showWeather()
         }
         viewModel.showAlertClosure = { [weak self] () in
             self?.activityIndicator.stopAnimating()
-            self?.displayAlertWith(title: "Error".localizedString, message: self?.viewModel.alertMessage ?? "")
+            self?.displayAlertWith(title: "Error".localizedString, message: self?.viewModel.alertMessage ?? ErrorMessages.serverFailed)
         }
         viewModel.fetchWeatherForCurrentLocation()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
-    
     /// Sets up the default UI
-    func setupDefaultUI() {
+    func setupUI() {
         view.backgroundColor = .systemBackground
         activityIndicator.center = view.center
         activityIndicator.startAnimating()
         view.addSubview(activityIndicator)
         view.addSubview(infoLable)
+        view.addSubview(tableView)
+        tableView.isHidden = true
         infoLable.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         infoLable.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -32).isActive = true
-    }
-    
-    /// Sets up the table view once data is avaliable
-    func setupWeatherUI() {
-        view.addSubview(tableView)
-        refreshControl.addTarget(self, action: #selector(self.refresh(_:)), for: .valueChanged)
-        tableView.addSubview(refreshControl)
-        activityIndicator.center = view.center
         tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         tableView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+
     }
     
     /// Updates the UI with the weather data
     func showWeather() {
-        tableView.data = viewModel.getDisplayViewModels()
-    }
-    
-    @objc func refresh(_ sender: AnyObject) {
-        viewModel.fetchWeatherForCurrentLocation()
+        tableView.isHidden = false
     }
 }

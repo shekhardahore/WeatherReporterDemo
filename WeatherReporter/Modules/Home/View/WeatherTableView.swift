@@ -10,38 +10,57 @@ import UIKit
 
 class WeatherTableView: UITableView {
     
-    var data: [[WeatherViewModelItem]]? {
-        didSet {
-            reloadData()
+    var viewModel: WeatherTableViewViewModel
+    var weatherRefreshControl = UIRefreshControl()
+    
+    init(viewModel: WeatherTableViewViewModel) {
+        self.viewModel = viewModel
+        super.init(frame: .zero, style: .plain)
+        setupTableView()
+        viewModel.updateTableView = { [weak self] () in
+            guard let `self` = self else {
+                return
+            }
+            self.weatherRefreshControl.endRefreshing()
+            self.reloadData()
         }
     }
     
-    override init(frame: CGRect, style: UITableView.Style) {
-        super.init(frame: frame, style: style)
-        registerReusableCell(WeatherSummaryTableViewCell.self)
-        registerReusableCell(WeatherDetailTableViewCell.self)
+    func setupTableView() {
         dataSource = self
+        translatesAutoresizingMaskIntoConstraints = false
+        insetsContentViewsToSafeArea = true
         estimatedRowHeight = 64.0
         rowHeight = UITableView.automaticDimension
+        tableFooterView = UIView()
+        weatherRefreshControl.addTarget(self, action: #selector(self.refresh(_:)), for: .valueChanged)
+        addSubview(weatherRefreshControl)
+        registerReusableCell(WeatherSummaryTableViewCell.self)
+        registerReusableCell(WeatherDetailTableViewCell.self)
     }
-    
+        
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    @objc func refresh(_ sender: AnyObject) {
+        viewModel.updateWeather()
+    }
+
 }
 
 extension WeatherTableView: UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return data?.count ?? 0
+        return viewModel.tableViewCellViewModels?.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return data?[section].count ?? 0
+        return viewModel.tableViewCellViewModels?[section].count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let item = data?[indexPath.section][indexPath.row] else {
+        guard let item = viewModel.tableViewCellViewModels?[indexPath.section][indexPath.row] else {
             let cell = UITableViewCell()
             return cell
         }
