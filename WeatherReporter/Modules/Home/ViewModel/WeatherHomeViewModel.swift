@@ -11,7 +11,7 @@ import Moya
 
 class WeatherHomeViewModel {
     let provider: MoyaProvider<WeatherReporterService>
-    var locationServiceManager: LocationService
+    var locationServiceManager: LocationProvider
     var weatherTableViewViewModel: WeatherTableViewViewModel
     var weatherModel: Weather? {
         didSet {
@@ -27,12 +27,12 @@ class WeatherHomeViewModel {
     var showAlertClosure: (()->())?
     var weatherUpdated: (()->())?
 
-    init(provider: MoyaProvider<WeatherReporterService>, locationServiceManager: LocationService) {
+    init(provider: MoyaProvider<WeatherReporterService>, locationServiceManager: LocationProvider) {
         self.provider = provider
         self.locationServiceManager = locationServiceManager
         self.weatherTableViewViewModel = WeatherTableViewViewModel()
         weatherTableViewViewModel.weatherHomeViewModelDelegate = self
-        locationServiceManager.delegate = self
+        self.locationServiceManager.delegate = self
     }
     
     /// Fetchs weather user's current location.

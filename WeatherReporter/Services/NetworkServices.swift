@@ -12,7 +12,7 @@ enum WeatherReporterService {
     case getWeather(latitude: String, longitude: String)
 }
 
-extension WeatherReporterService: TargetType {
+extension WeatherReporterService: TargetType, TestingStubbable {
         
     var baseURL: URL {
         switch self {
@@ -41,12 +41,7 @@ extension WeatherReporterService: TargetType {
     var sampleData: Data {
         switch self {
         case .getWeather(_):
-            var details: [String: Any] = [:]
-            details["id"] = 3122
-            details["profile_pic"] = ""
-            details["favorite"] = false
-            let contact = try? JSONSerialization.data(withJSONObject: details, options: .prettyPrinted)
-            return contact ?? Data()
+            return getTestingStubFor(file: "weather")
         }
     }
     var headers: [String : String]? {

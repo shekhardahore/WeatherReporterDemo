@@ -9,7 +9,13 @@
 import Foundation
 import CoreLocation
 
-class LocationService: NSObject {
+protocol LocationProvider {
+    func retriveCurrentLocation()
+    var delegate: LocationServiceDelegate? { get set }
+}
+
+
+class LocationService: NSObject, LocationProvider {
     
     weak var delegate: LocationServiceDelegate?
     let locationManager: CLLocationManager = {
@@ -24,7 +30,7 @@ class LocationService: NSObject {
     }
     
     /// Requests for current location if available
-    func retriveCurrentLocation(){
+    func retriveCurrentLocation() {
         let status = CLLocationManager.authorizationStatus()
         if status == .denied || status == .restricted || !CLLocationManager.locationServicesEnabled() {
             DispatchQueue.main.async { [weak self] in
