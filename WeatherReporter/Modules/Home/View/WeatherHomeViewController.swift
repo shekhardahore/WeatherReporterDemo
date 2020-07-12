@@ -29,8 +29,8 @@ class WeatherHomeViewController: UIViewController, AlertDisplayable {
         let button = UIButton(type: UIButton.ButtonType.custom)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Refresh", for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 14)
-        button.setTitleColor(.blue, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .bold)
+        button.setTitleColor(.red, for: .normal)
         button.addTarget(self, action: #selector(WeatherHomeViewController.onRefresh(_:)), for: .touchUpInside)
         return button
     }()
@@ -80,8 +80,7 @@ class WeatherHomeViewController: UIViewController, AlertDisplayable {
         btnRefresh.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         btnRefresh.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         btnRefresh.heightAnchor.constraint(equalToConstant: 44).isActive = true
-        btnRefresh.widthAnchor.constraint(equalToConstant: 50).isActive = true
-
+        btnRefresh.widthAnchor.constraint(equalToConstant: 60).isActive = true
         tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         tableView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
