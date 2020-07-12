@@ -1,0 +1,14 @@
+{
+    "latitude": 59.3310373,
+    "longitude": 18.0706638,
+    "timezone": "Europe/Stockholm",
+    "currently": {
+        "time": 1537882620,
+        "summary": "Overcast",
+        "icon": "cloudy",
+        "precipIntensity": 0.2243,
+        "precipProbability": 0.09,
+        "precipType": "rain",
+        "temperature": 26.14,
+	}
+}

@@ -37,8 +37,10 @@ class WeatherTableViewViewModelTests: XCTestCase, TestingStubbable {
     
     func testUpdateTableViewWithPartialData() {
         viewModel.updateTableView = { [weak self] in
-            XCTAssertNil(self?.viewModel.tableViewCellViewModels)
+            XCTAssertNotNil(self?.viewModel.tableViewCellViewModels)
+            //Will only have viewmodel for "chance of rain" since rest of the data is not present.
+            XCTAssert(self?.viewModel.tableViewCellViewModels![1].count == 1)
         }
-        viewModel.weatherModel = getWeatherModelFrom(file: "WeatherEmpty")
+        viewModel.weatherModel = getWeatherModelFrom(file: "WeatherPartial")
     }
 }
