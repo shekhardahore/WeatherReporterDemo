@@ -16,7 +16,7 @@ class WeatherHomeViewController: UIViewController, AlertDisplayable {
         activityIndicator.hidesWhenStopped = true
         return activityIndicator
     }()
-    var infoLable: UILabel = {
+    var lblInfo: UILabel = {
         let label: UILabel = UILabel(frame: .zero)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .right
@@ -24,6 +24,15 @@ class WeatherHomeViewController: UIViewController, AlertDisplayable {
         label.numberOfLines = 1
         label.text = "Waiting for location...".localizedString
         return label
+    }()
+    var btnRefresh: UIButton = {
+        let button = UIButton(type: UIButton.ButtonType.custom)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Refresh", for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+        button.setTitleColor(.blue, for: .normal)
+        button.addTarget(self, action: #selector(WeatherHomeViewController.onRefresh(_:)), for: .touchUpInside)
+        return button
     }()
     var tableView: WeatherTableView
     
@@ -49,6 +58,7 @@ class WeatherHomeViewController: UIViewController, AlertDisplayable {
         }
         viewModel.showAlertClosure = { [weak self] () in
             self?.activityIndicator.stopAnimating()
+            self?.btnRefresh.isHidden = false
             self?.displayAlertWith(title: "Error".localizedString, message: self?.viewModel.alertMessage ?? ErrorMessages.serverFailed)
         }
         viewModel.fetchWeatherForCurrentLocation()
@@ -60,20 +70,32 @@ class WeatherHomeViewController: UIViewController, AlertDisplayable {
         activityIndicator.center = view.center
         activityIndicator.startAnimating()
         view.addSubview(activityIndicator)
-        view.addSubview(infoLable)
+        view.addSubview(lblInfo)
+        view.addSubview(btnRefresh)
         view.addSubview(tableView)
+        btnRefresh.isHidden = true
         tableView.isHidden = true
-        infoLable.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        infoLable.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -32).isActive = true
+        lblInfo.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        lblInfo.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -32).isActive = true
+        btnRefresh.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        btnRefresh.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        btnRefresh.heightAnchor.constraint(equalToConstant: 44).isActive = true
+        btnRefresh.widthAnchor.constraint(equalToConstant: 50).isActive = true
+
         tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         tableView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-
     }
     
     /// Updates the UI with the weather data
     func showWeather() {
         tableView.isHidden = false
+    }
+    
+    @objc func onRefresh(_ sender: UIButton) {
+        viewModel.fetchWeatherForCurrentLocation()
+        btnRefresh.isHidden = true
+        activityIndicator.startAnimating()
     }
 }

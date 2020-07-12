@@ -21,6 +21,7 @@ class WeatherHomeViewModel {
     }
     var alertMessage: String? {
         didSet {
+            self.weatherTableViewViewModel.weatherModel = self.weatherModel
             self.showAlertClosure?()
         }
     }

@@ -9,7 +9,7 @@
 import Foundation
 
 struct Weather: Codable {
-    let latitude, longitude: Double?
-    let timezone: String?
-    let currently: Currently?
+    let latitude, longitude: Double
+    let timezone: String
+    let currently: Currently
 }

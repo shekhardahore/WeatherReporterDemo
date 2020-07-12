@@ -22,4 +22,13 @@ extension TestingStubbable {
         }
         return data
     }
+    
+    func getWeatherModelFrom(file: String) -> Weather? {
+        let contactsData = getTestingStubFor(file: file)
+        let decoder = JSONDecoder()
+        guard let weather = try? decoder.decode(Weather.self, from: contactsData) else {
+            return nil
+        }
+        return weather
+    }
 }

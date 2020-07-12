@@ -61,6 +61,11 @@ extension LocationService: CLLocationManagerDelegate {
                 self?.delegate?.failedToFetchLocation(error: ErrorMessages.locationServiceDiabled)
                 return
             }
+        } else {
+            DispatchQueue.main.async { [weak self] in
+                self?.delegate?.failedToFetchLocation(error: ErrorMessages.locationServiceFailed)
+                return
+            }
         }
     }
     

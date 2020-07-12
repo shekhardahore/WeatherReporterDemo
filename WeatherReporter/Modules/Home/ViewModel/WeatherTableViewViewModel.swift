@@ -25,11 +25,11 @@ class WeatherTableViewViewModel {
     
     /// Generates viewmodel for the WeatherTableView
     func updateDisplayViewModels() {
-        var displayViewModels: [[WeatherViewModelItem]] = [[]]
         guard let weather = weatherModel else {
-            tableViewCellViewModels = displayViewModels
+            tableViewCellViewModels = nil
             return
         }
+        var displayViewModels: [[WeatherViewModelItem]] = [[]]
         let summaryModel = WeatherSummaryViewModel(data: weather)
         displayViewModels.append([summaryModel])
         displayViewModels.append(getDetailsViewModels())
@@ -48,7 +48,8 @@ class WeatherTableViewViewModel {
                 let model = try WeatherDetailViewModel(type: type, model: weather)
                 detailsViewModels.append(model)
             } catch let error {
-                assertionFailure("\(error.localizedDescription): \(type) ")
+                //log error
+                print("\(error.localizedDescription): \(type)")
             }
         }
         return detailsViewModels

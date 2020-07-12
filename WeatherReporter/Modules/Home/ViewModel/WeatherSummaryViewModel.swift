@@ -18,8 +18,8 @@ final class WeatherSummaryViewModel: WeatherViewModelItem {
     }
     
     init(data: Weather) {
-        summaryText = data.currently?.summary ?? "--"
-        if let temp = data.currently?.temperature {
+        summaryText = data.currently.summary ?? "--"
+        if let temp = data.currently.temperature {
             tempratureText = MeasurementFormatter.getLocalizedTextFor(temperature: temp)
         }
         dateText = Date().inDisplaySummaryFormat
