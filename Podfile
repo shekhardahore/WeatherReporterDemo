@@ -15,6 +15,7 @@ target 'WeatherReporter' do
   target 'WeatherReporterUITests' do
     inherit! :search_paths
     # Pods for testing
+    pod 'Moya'
   end
 
 end

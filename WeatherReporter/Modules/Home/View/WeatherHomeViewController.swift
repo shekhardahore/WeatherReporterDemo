@@ -49,14 +49,14 @@ class WeatherHomeViewController: UIViewController, AlertDisplayable {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        viewModel.weatherUpdated = { [weak self] () in
+        viewModel.weatherUpdated = { [weak self] in
             guard let `self` = self else {
                 return
             }
             self.activityIndicator.stopAnimating()
             self.showWeather()
         }
-        viewModel.showAlertClosure = { [weak self] () in
+        viewModel.showAlertClosure = { [weak self] in
             self?.activityIndicator.stopAnimating()
             self?.btnRefresh.isHidden = false
             self?.displayAlertWith(title: "Error".localizedString, message: self?.viewModel.alertMessage ?? ErrorMessages.serverFailed)

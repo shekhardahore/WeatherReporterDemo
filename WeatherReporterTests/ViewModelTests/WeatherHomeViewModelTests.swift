@@ -15,7 +15,7 @@ class WeatherHomeViewModelTests: XCTestCase {
     override func setUp() {
         let provider = MoyaProvider<WeatherReporterService>(stubClosure: MoyaProvider.immediatelyStub)
         let location = LocationServiceMock()
-        viewModel = WeatherHomeViewModel(provider: provider, locationServiceManager: location)
+        viewModel = WeatherHomeViewModel(networkProvider: provider, locationProvider: location)
     }
 
     override func tearDown() {
@@ -23,10 +23,12 @@ class WeatherHomeViewModelTests: XCTestCase {
     }
 
     func testFetchWeatherForCurrentLocation() {
-
-        viewModel.weatherUpdated = { [weak self] () in
-            XCTAssertNotNil(self?.viewModel.weatherModel)
-            XCTAssert(true)
+        
+        viewModel.weatherUpdated = { [weak self] in
+            XCTAssertNotNil(self?.viewModel.weatherModel, "Failed to fetch weather")
+        }
+        viewModel.showAlertClosure = { [weak self] in
+            XCTAssertNil(self?.viewModel.alertMessage, "Failed to fetch weather, because of \(self?.viewModel.alertMessage ?? "")")
         }
         viewModel.fetchWeatherForCurrentLocation()
     }

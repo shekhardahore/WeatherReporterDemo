@@ -13,7 +13,7 @@ extension Date {
     /// Converts the date to string to display in the WeatherSummaryTableViewCell
     var inDisplaySummaryFormat: String {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "EEEE, MMM d, yyyy"
+        dateFormatter.dateFormat = "EEEE, MMM d"
         return dateFormatter.string(from: self)
     }
 }

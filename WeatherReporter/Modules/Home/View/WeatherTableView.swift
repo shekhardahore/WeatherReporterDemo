@@ -17,7 +17,7 @@ class WeatherTableView: UITableView {
         self.viewModel = viewModel
         super.init(frame: .zero, style: .plain)
         setupTableView()
-        viewModel.updateTableView = { [weak self] () in
+        viewModel.updateTableView = { [weak self] in
             guard let `self` = self else {
                 return
             }

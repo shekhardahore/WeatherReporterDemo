@@ -10,8 +10,8 @@ import Foundation
 import Moya
 
 class WeatherHomeViewModel {
-    let provider: MoyaProvider<WeatherReporterService>
-    var locationServiceManager: LocationProvider
+    let networkProvider: MoyaProvider<WeatherReporterService>
+    var locationProvider: LocationProvider
     var weatherTableViewViewModel: WeatherTableViewViewModel
     var weatherModel: Weather? {
         didSet {
@@ -28,21 +28,21 @@ class WeatherHomeViewModel {
     var showAlertClosure: (()->())?
     var weatherUpdated: (()->())?
 
-    init(provider: MoyaProvider<WeatherReporterService>, locationServiceManager: LocationProvider) {
-        self.provider = provider
-        self.locationServiceManager = locationServiceManager
+    init(networkProvider: MoyaProvider<WeatherReporterService>, locationProvider: LocationProvider) {
+        self.networkProvider = networkProvider
+        self.locationProvider = locationProvider
         self.weatherTableViewViewModel = WeatherTableViewViewModel()
         weatherTableViewViewModel.weatherHomeViewModelDelegate = self
-        self.locationServiceManager.delegate = self
+        self.locationProvider.delegate = self
     }
     
     /// Fetchs weather user's current location.
     func fetchWeatherForCurrentLocation() {
-        locationServiceManager.retriveCurrentLocation()
+        locationProvider.retriveCurrentLocation()
     }
     
     func fetchWeatherFor(latitude: String, longitude: String) {
-        provider.request(.getWeather(latitude: latitude, longitude: longitude)) { [unowned self] (result) in
+        networkProvider.request(.getWeather(latitude: latitude, longitude: longitude)) { [unowned self] (result) in
             switch result {
             case .success(let response):
                 do {

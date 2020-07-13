@@ -23,14 +23,14 @@ class WeatherTableViewViewModelTests: XCTestCase, TestingStubbable {
 
     func testUpdateTableViewWithGoodData() {
         viewModel.updateTableView = { [weak self] in
-            XCTAssert(self?.viewModel.tableViewCellViewModels?.count ?? 0 > 0)
+            XCTAssert(self?.viewModel.tableViewCellViewModels?.count ?? 0 > 0, "Failed to get tablveViewCellViewModels from weather model")
         }
         viewModel.weatherModel = getWeatherModelFrom(file: "weather")
     }
     
     func testUpdateTableViewWithNoData() {
         viewModel.updateTableView = { [weak self] in
-            XCTAssertNil(self?.viewModel.tableViewCellViewModels)
+            XCTAssertNil(self?.viewModel.tableViewCellViewModels, "Error: Got tableViewCellViewModels from empty data.")
         }
         viewModel.weatherModel = getWeatherModelFrom(file: "WeatherEmpty")
     }
@@ -39,7 +39,7 @@ class WeatherTableViewViewModelTests: XCTestCase, TestingStubbable {
         viewModel.updateTableView = { [weak self] in
             XCTAssertNotNil(self?.viewModel.tableViewCellViewModels)
             //Will only have viewmodel for "chance of rain" since rest of the data is not present.
-            XCTAssert(self?.viewModel.tableViewCellViewModels![1].count == 1)
+            XCTAssert(self?.viewModel.tableViewCellViewModels![1].count == 1, "Error: Got more tableViewCellViewModels than expected")
         }
         viewModel.weatherModel = getWeatherModelFrom(file: "WeatherPartial")
     }

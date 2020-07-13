@@ -14,7 +14,6 @@ protocol LocationProvider {
     var delegate: LocationServiceDelegate? { get set }
 }
 
-
 class LocationService: NSObject, LocationProvider {
     
     weak var delegate: LocationServiceDelegate?
