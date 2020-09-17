@@ -57,20 +57,20 @@ final class WeatherSummaryTableViewCell: UITableViewCell, Reusable {
     private func setupUI() {
         
         selectionStyle = .none
-        contentView.addSubview(lblSummary)
-        contentView.addSubview(lblTemperature)
-        contentView.addSubview(lblDate)
-        
+        contentView.addSubviews(lblSummary, lblTemperature, lblDate)
+
         let marginGuide = contentView.layoutMarginsGuide
         
-        lblSummary.centerXAnchor.constraint(equalTo: marginGuide.centerXAnchor).isActive = true
-        lblSummary.topAnchor.constraint(equalTo: marginGuide.topAnchor, constant: 50).isActive = true
-        
-        lblTemperature.centerXAnchor.constraint(equalTo: marginGuide.centerXAnchor).isActive = true
-        lblTemperature.topAnchor.constraint(equalTo: lblSummary.bottomAnchor, constant: 16).isActive = true
-        
-        lblDate.centerXAnchor.constraint(equalTo: marginGuide.centerXAnchor).isActive = true
-        lblDate.topAnchor.constraint(equalTo: lblTemperature.bottomAnchor, constant: 16).isActive = true
-        lblDate.bottomAnchor.constraint(equalTo: marginGuide.bottomAnchor, constant: -32).isActive = true
+        NSLayoutConstraint.activate([
+            lblSummary.centerXAnchor.constraint(equalTo: marginGuide.centerXAnchor),
+            lblSummary.topAnchor.constraint(equalTo: marginGuide.topAnchor, constant: 50),
+            
+            lblTemperature.centerXAnchor.constraint(equalTo: marginGuide.centerXAnchor),
+            lblTemperature.topAnchor.constraint(equalTo: lblSummary.bottomAnchor, constant: 16),
+            
+            lblDate.centerXAnchor.constraint(equalTo: marginGuide.centerXAnchor),
+            lblDate.topAnchor.constraint(equalTo: lblTemperature.bottomAnchor, constant: 16),
+            lblDate.bottomAnchor.constraint(equalTo: marginGuide.bottomAnchor, constant: -32)
+        ])
     }
 }

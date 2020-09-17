@@ -62,9 +62,7 @@ final class WeatherHomeViewController: UIViewController, AlertDisplayable {
     func setupUI() {
         view.backgroundColor = .systemBackground
         showSpinner()
-        view.addSubview(lblInfo)
-        view.addSubview(tableView)
-        view.addSubview(btnRefresh)
+        view.addSubviews(lblInfo, tableView, btnRefresh)
         btnRefresh.isHidden = true
         tableView.isHidden = true
         
@@ -78,13 +76,13 @@ final class WeatherHomeViewController: UIViewController, AlertDisplayable {
             btnRefresh.topAnchor.constraint(equalTo: lblInfo.bottomAnchor, constant: 20),
             btnRefresh.leadingAnchor.constraint(equalTo: margin.leadingAnchor, constant: 20),
             btnRefresh.trailingAnchor.constraint(equalTo: margin.trailingAnchor, constant: -20),
-            btnRefresh.heightAnchor.constraint(equalToConstant: 50)
+            btnRefresh.heightAnchor.constraint(equalToConstant: 50),
+            
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.topAnchor.constraint(equalTo: view.topAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
-        
-        tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        tableView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
     }
     
     /// Updates the UI with the weather data

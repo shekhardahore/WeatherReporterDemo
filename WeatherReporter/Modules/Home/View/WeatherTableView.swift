@@ -34,7 +34,7 @@ final class WeatherTableView: UITableView {
         rowHeight = UITableView.automaticDimension
         tableFooterView = UIView()
         weatherRefreshControl.addTarget(self, action: #selector(self.refresh(_:)), for: .valueChanged)
-        addSubview(weatherRefreshControl)
+        addSubviews(weatherRefreshControl)
         registerReusableCell(WeatherSummaryTableViewCell.self)
         registerReusableCell(WeatherDetailTableViewCell.self)
     }

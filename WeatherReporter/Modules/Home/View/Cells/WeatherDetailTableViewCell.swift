@@ -50,15 +50,20 @@ final class WeatherDetailTableViewCell: UITableViewCell, Reusable {
     private func setupUI() {
         
         selectionStyle = .none
-        contentView.addSubview(lblTitle)
-        contentView.addSubview(lblValue)
+        contentView.addSubviews(lblTitle, lblValue)
         
         let marginGuide = contentView.layoutMarginsGuide
-        
-        lblTitle.centerYAnchor.constraint(equalTo: marginGuide.centerYAnchor).isActive = true
-        lblTitle.leadingAnchor.constraint(equalTo: marginGuide.leadingAnchor, constant: 24).isActive = true
-        
-        lblValue.centerYAnchor.constraint(equalTo: marginGuide.centerYAnchor).isActive = true
-        lblValue.trailingAnchor.constraint(equalTo: marginGuide.trailingAnchor, constant: -24).isActive = true
+        NSLayoutConstraint.activate([
+            lblTitle.topAnchor.constraint(equalTo: marginGuide.topAnchor),
+            lblTitle.leadingAnchor.constraint(equalTo: marginGuide.leadingAnchor, constant: 24),
+            lblTitle.bottomAnchor.constraint(equalTo: marginGuide.bottomAnchor),
+            lblValue.centerYAnchor.constraint(equalTo: lblTitle.centerYAnchor),
+            lblValue.trailingAnchor.constraint(equalTo: marginGuide.trailingAnchor, constant: -24),
+        ])
+        let spacingConstraint = lblTitle.trailingAnchor.constraint(equalTo: lblValue.leadingAnchor, constant: 5)
+        spacingConstraint.priority = UILayoutPriority(rawValue: 500)
+        spacingConstraint.isActive = true
+        lblValue.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        lblValue.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
     }
 }
