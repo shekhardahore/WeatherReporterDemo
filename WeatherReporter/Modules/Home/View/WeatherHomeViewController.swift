@@ -11,29 +11,22 @@ import UIKit
 class WeatherHomeViewController: UIViewController, AlertDisplayable {
 
     var viewModel: WeatherHomeViewModel
-    var activityIndicator: UIActivityIndicatorView = {
-        let activityIndicator = UIActivityIndicatorView(style: .medium)
-        activityIndicator.hidesWhenStopped = true
-        return activityIndicator
-    }()
     var lblInfo: UILabel = {
         let label: UILabel = UILabel(frame: .zero)
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textAlignment = .right
-        label.font = label.font.withSize(14)
-        label.numberOfLines = 1
+        label.textAlignment = .center
+        label.font = label.font.withSize(17)
+        label.numberOfLines = 0
         label.text = "Waiting for location...".localizedString
         return label
     }()
-    var btnRefresh: UIButton = {
-        let button = UIButton(type: UIButton.ButtonType.custom)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Refresh", for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .bold)
-        button.setTitleColor(.red, for: .normal)
+    
+    var btnRefresh: WRButton = {
+        let button = WRButton(title: "Refresh".localizedString)
         button.addTarget(self, action: #selector(WeatherHomeViewController.onRefresh(_:)), for: .touchUpInside)
         return button
     }()
+    
     var tableView: WeatherTableView
     
     init(viewModel: WeatherHomeViewModel) {
@@ -53,11 +46,11 @@ class WeatherHomeViewController: UIViewController, AlertDisplayable {
             guard let `self` = self else {
                 return
             }
-            self.activityIndicator.stopAnimating()
+            self.hideSpinner()
             self.showWeather()
         }
         viewModel.showAlertClosure = { [weak self] in
-            self?.activityIndicator.stopAnimating()
+            self?.hideSpinner()
             self?.btnRefresh.isHidden = false
             self?.displayAlertWith(title: "Error".localizedString, message: self?.viewModel.alertMessage ?? ErrorMessages.serverFailed)
         }
@@ -67,20 +60,26 @@ class WeatherHomeViewController: UIViewController, AlertDisplayable {
     /// Sets up the default UI
     func setupUI() {
         view.backgroundColor = .systemBackground
-        activityIndicator.center = view.center
-        activityIndicator.startAnimating()
-        view.addSubview(activityIndicator)
+        showSpinner()
         view.addSubview(lblInfo)
-        view.addSubview(btnRefresh)
         view.addSubview(tableView)
+        view.addSubview(btnRefresh)
         btnRefresh.isHidden = true
         tableView.isHidden = true
-        lblInfo.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        lblInfo.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -32).isActive = true
-        btnRefresh.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        btnRefresh.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        btnRefresh.heightAnchor.constraint(equalToConstant: 44).isActive = true
-        btnRefresh.widthAnchor.constraint(equalToConstant: 60).isActive = true
+        
+        let margin = view.layoutMarginsGuide
+        NSLayoutConstraint.activate([
+            lblInfo.leadingAnchor.constraint(equalTo: margin.leadingAnchor),
+            lblInfo.trailingAnchor.constraint(equalTo: margin.trailingAnchor),
+            lblInfo.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            lblInfo.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -75),
+            
+            btnRefresh.topAnchor.constraint(equalTo: lblInfo.bottomAnchor, constant: 20),
+            btnRefresh.leadingAnchor.constraint(equalTo: margin.leadingAnchor),
+            btnRefresh.trailingAnchor.constraint(equalTo: margin.trailingAnchor),
+            btnRefresh.heightAnchor.constraint(equalToConstant: 44)
+        ])
+        
         tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         tableView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
@@ -95,6 +94,6 @@ class WeatherHomeViewController: UIViewController, AlertDisplayable {
     @objc func onRefresh(_ sender: UIButton) {
         viewModel.fetchWeatherForCurrentLocation()
         btnRefresh.isHidden = true
-        activityIndicator.startAnimating()
+        showSpinner()
     }
 }

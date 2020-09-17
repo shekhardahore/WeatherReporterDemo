@@ -38,7 +38,9 @@ class LocationService: NSObject, LocationProvider {
             }
         }
         if status == .notDetermined {
-            locationManager.requestWhenInUseAuthorization()
+            DispatchQueue.main.async {
+                self.locationManager.requestWhenInUseAuthorization()
+            }
             return
         }
         locationManager.requestLocation()
