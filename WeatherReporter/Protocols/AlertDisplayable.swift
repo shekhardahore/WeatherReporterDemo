@@ -11,7 +11,6 @@ import UIKit
 
 protocol AlertDisplayable {
     func displayAlertWith(title: String?, message: String?)
-    func displayAlertWithSettingsOption()
 }
 
 extension AlertDisplayable where Self: UIViewController {
@@ -21,11 +20,11 @@ extension AlertDisplayable where Self: UIViewController {
     ///   - title: title of alert
     ///   - message: message of alert
     func displayAlertWith(title: String?, message: String?) {
-        let message = message ?? ErrorMessages.defaultError.rawValue
+        let message: String = message ?? ErrorMessages.defaultError.rawValue
         if ErrorMessages(rawValue: message) == ErrorMessages.locationServiceDiabled {
             displayAlertWithSettingsOption()
         } else {
-            let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+            let alertController = UIAlertController(title: nil, message: message.localizedString, preferredStyle: .alert)
             let okAction = UIAlertAction(title: "Ok", style: .cancel, handler: nil)
             alertController.addAction(okAction)
             DispatchQueue.main.async {
@@ -36,10 +35,10 @@ extension AlertDisplayable where Self: UIViewController {
     
     
     /// Display Alert with settings redirect.
-    func displayAlertWithSettingsOption() {
-        let alertController = UIAlertController(title: title, message: ErrorMessages.locationServiceDiabled.rawValue, preferredStyle: .alert)
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        let settingsAction = UIAlertAction(title: "Open Settings", style: .destructive) { (_) -> Void in
+    private func displayAlertWithSettingsOption() {
+        let alertController = UIAlertController(title: title, message: ErrorMessages.locationServiceDiabled.rawValue.localizedString, preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: "Cancel".localizedString, style: .cancel, handler: nil)
+        let settingsAction = UIAlertAction(title: "Open Settings".localizedString, style: .destructive) { (_) -> Void in
             let settingsUrl = NSURL(string: UIApplication.openSettingsURLString)
             if let url = settingsUrl {
                 DispatchQueue.main.async {
