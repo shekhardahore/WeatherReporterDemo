@@ -33,7 +33,7 @@ final class LocationService: NSObject, LocationProvider {
         let status = CLLocationManager.authorizationStatus()
         if status == .denied || status == .restricted || !CLLocationManager.locationServicesEnabled() {
             DispatchQueue.main.async { [weak self] in
-                self?.delegate?.failedToFetchLocation(error: ErrorMessages.locationServiceDiabled)
+                self?.delegate?.failedToFetchLocation(error: ErrorMessages.locationServiceDiabled.rawValue)
                 return
             }
         }
@@ -59,12 +59,12 @@ extension LocationService: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         if let error = error as? CLError, error.code == .denied {
             DispatchQueue.main.async { [weak self] in
-                self?.delegate?.failedToFetchLocation(error: ErrorMessages.locationServiceDiabled)
+                self?.delegate?.failedToFetchLocation(error: ErrorMessages.locationServiceDiabled.rawValue)
                 return
             }
         } else {
             DispatchQueue.main.async { [weak self] in
-                self?.delegate?.failedToFetchLocation(error: ErrorMessages.locationServiceFailed)
+                self?.delegate?.failedToFetchLocation(error: ErrorMessages.locationServiceFailed.rawValue)
                 return
             }
         }

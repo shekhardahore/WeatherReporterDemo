@@ -25,10 +25,10 @@ extension WRErrors: LocalizedError {
     }
 }
 
-struct ErrorMessages {
-    static let locationServiceDiabled = "We need your location. Please make sure in the Settings app you have given us permission to use your location details."
-    static let locationServiceFailed = "Failed to get your location. Please try again."
-    static let dataParsing = "Cannot parse data. Please try again later."
-    static let serverFailed = "There seems to be an issue with the service. Please try again."
+enum ErrorMessages: String {
+    case locationServiceDiabled = "Uh oh, we need your location to give you accurate weather report. Please make sure in the Settings app you have given us permission to use your location."
+    case locationServiceFailed = "Uh oh, we couldn't find your location."
+    case defaultError = "Uh oh, something doesn't seem right. Please try again."
+    case serverFailed = "Uh oh, we couldn't connect to our servers, please check the network or try again later."
 
 }

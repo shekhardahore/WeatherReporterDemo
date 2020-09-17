@@ -43,16 +43,17 @@ final class WeatherHomeViewController: UIViewController, AlertDisplayable {
         super.viewDidLoad()
         setupUI()
         viewModel.weatherUpdated = { [weak self] in
-            guard let `self` = self else {
-                return
+            guard let `self` = self else { return }
+            DispatchQueue.main.async {
+                self.hideSpinner()
+                self.showWeather()
             }
-            self.hideSpinner()
-            self.showWeather()
         }
         viewModel.showAlertClosure = { [weak self] in
-            self?.hideSpinner()
-            self?.btnRefresh.isHidden = false
-            self?.displayAlertWith(title: "Error".localizedString, message: self?.viewModel.alertMessage ?? ErrorMessages.serverFailed)
+            guard let `self` = self else { return }
+            self.hideSpinner()
+            self.btnRefresh.isHidden = false
+            self.displayAlertWith(title: nil, message: self.viewModel.alertMessage)
         }
         viewModel.fetchWeatherForCurrentLocation()
     }

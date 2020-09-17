@@ -49,10 +49,10 @@ final class WeatherHomeViewModel {
                     let weather = try JSONDecoder().decode(Weather.self, from: response.data)
                     self.weatherModel = weather
                 } catch {
-                    self.alertMessage = ErrorMessages.dataParsing
+                    self.alertMessage = ErrorMessages.defaultError.rawValue
                 }
             case .failure(_):
-                self.alertMessage = ErrorMessages.serverFailed
+                self.alertMessage = ErrorMessages.serverFailed.rawValue
             }
         }
     }
