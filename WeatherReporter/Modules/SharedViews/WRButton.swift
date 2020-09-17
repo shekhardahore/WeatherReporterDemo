@@ -8,7 +8,7 @@
 
 import UIKit
 
-class WRButton: UIButton {
+final class WRButton: UIButton {
     
     override init(frame: CGRect) {
         super.init(frame: frame)

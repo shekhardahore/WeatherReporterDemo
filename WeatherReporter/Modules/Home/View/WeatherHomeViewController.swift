@@ -8,7 +8,7 @@
 
 import UIKit
 
-class WeatherHomeViewController: UIViewController, AlertDisplayable {
+final class WeatherHomeViewController: UIViewController, AlertDisplayable {
 
     var viewModel: WeatherHomeViewModel
     var lblInfo: UILabel = {
@@ -75,9 +75,9 @@ class WeatherHomeViewController: UIViewController, AlertDisplayable {
             lblInfo.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -75),
             
             btnRefresh.topAnchor.constraint(equalTo: lblInfo.bottomAnchor, constant: 20),
-            btnRefresh.leadingAnchor.constraint(equalTo: margin.leadingAnchor),
-            btnRefresh.trailingAnchor.constraint(equalTo: margin.trailingAnchor),
-            btnRefresh.heightAnchor.constraint(equalToConstant: 44)
+            btnRefresh.leadingAnchor.constraint(equalTo: margin.leadingAnchor, constant: 20),
+            btnRefresh.trailingAnchor.constraint(equalTo: margin.trailingAnchor, constant: -20),
+            btnRefresh.heightAnchor.constraint(equalToConstant: 50)
         ])
         
         tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true

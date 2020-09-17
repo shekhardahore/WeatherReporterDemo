@@ -14,10 +14,10 @@ protocol LocationProvider {
     var delegate: LocationServiceDelegate? { get set }
 }
 
-class LocationService: NSObject, LocationProvider {
+final class LocationService: NSObject, LocationProvider {
     
     weak var delegate: LocationServiceDelegate?
-    let locationManager: CLLocationManager = {
+    private let locationManager: CLLocationManager = {
         let manager = CLLocationManager()
         manager.desiredAccuracy = kCLLocationAccuracyKilometer
         return manager

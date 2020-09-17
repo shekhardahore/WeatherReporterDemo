@@ -8,9 +8,9 @@
 
 import UIKit
 
-class WeatherDetailTableViewCell: UITableViewCell, Reusable {
+final class WeatherDetailTableViewCell: UITableViewCell, Reusable {
     
-    var lblTitle: UILabel = {
+    private var lblTitle: UILabel = {
         let label: UILabel = UILabel(frame: .zero)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .left
@@ -20,7 +20,7 @@ class WeatherDetailTableViewCell: UITableViewCell, Reusable {
         return label
     }()
     
-    var lblValue: UILabel = {
+    private var lblValue: UILabel = {
         let label: UILabel = UILabel(frame: .zero)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .right
@@ -47,7 +47,7 @@ class WeatherDetailTableViewCell: UITableViewCell, Reusable {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setupUI() {
+    private func setupUI() {
         
         selectionStyle = .none
         contentView.addSubview(lblTitle)

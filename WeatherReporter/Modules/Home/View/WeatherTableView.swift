@@ -8,7 +8,7 @@
 
 import UIKit
 
-class WeatherTableView: UITableView {
+final class WeatherTableView: UITableView {
     
     var viewModel: WeatherTableViewViewModel
     var weatherRefreshControl = UIRefreshControl()

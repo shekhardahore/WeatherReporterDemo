@@ -8,14 +8,14 @@
 
 import Foundation
 
-class WeatherTableViewViewModel {
+final class WeatherTableViewViewModel {
     
     var weatherModel: Weather? {
         didSet {
             self.updateDisplayViewModels()
         }
     }
-    var tableViewCellViewModels: [[WeatherViewModelItem]]? {
+    private(set) var tableViewCellViewModels: [[WeatherViewModelItem]]? {
         didSet {
             self.updateTableView?()
         }
@@ -24,7 +24,7 @@ class WeatherTableViewViewModel {
     var updateTableView: (()->())?
     
     /// Generates viewmodel for the WeatherTableView
-    func updateDisplayViewModels() {
+    private func updateDisplayViewModels() {
         guard let weather = weatherModel else {
             tableViewCellViewModels = nil
             return

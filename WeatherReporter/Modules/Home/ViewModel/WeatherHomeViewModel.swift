@@ -9,17 +9,17 @@
 import Foundation
 import Moya
 
-class WeatherHomeViewModel {
-    let networkProvider: MoyaProvider<WeatherReporterService>
-    var locationProvider: LocationProvider
-    var weatherTableViewViewModel: WeatherTableViewViewModel
-    var weatherModel: Weather? {
+final class WeatherHomeViewModel {
+    private let networkProvider: MoyaProvider<WeatherReporterService>
+    private var locationProvider: LocationProvider
+    private(set) var weatherTableViewViewModel: WeatherTableViewViewModel
+    private var weatherModel: Weather? {
         didSet {
             self.weatherUpdated?()
             self.weatherTableViewViewModel.weatherModel = self.weatherModel
         }
     }
-    var alertMessage: String? {
+    private(set) var alertMessage: String? {
         didSet {
             self.weatherTableViewViewModel.weatherModel = self.weatherModel
             self.showAlertClosure?()
@@ -41,7 +41,7 @@ class WeatherHomeViewModel {
         locationProvider.retriveCurrentLocation()
     }
     
-    func fetchWeatherFor(latitude: String, longitude: String) {
+    private func fetchWeatherFor(latitude: String, longitude: String) {
         networkProvider.request(.getWeather(latitude: latitude, longitude: longitude)) { [unowned self] (result) in
             switch result {
             case .success(let response):
