@@ -73,5 +73,6 @@ final class WeatherSummaryTableViewCell: UICollectionViewCell, Reusable {
         ])
         lblSummary.setContentHuggingPriority(.defaultHigh, for: .vertical)
         lblTemperature.setContentHuggingPriority(.defaultHigh, for: .vertical)
+        lblDate.setContentHuggingPriority(.defaultHigh, for: .vertical)
     }
 }
