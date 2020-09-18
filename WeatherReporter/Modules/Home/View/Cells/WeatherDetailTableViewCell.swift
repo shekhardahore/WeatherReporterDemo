@@ -8,7 +8,7 @@
 
 import UIKit
 
-final class WeatherDetailTableViewCell: UITableViewCell, Reusable {
+final class WeatherDetailTableViewCell: UICollectionViewCell, Reusable {
     
     private var lblTitle: UILabel = {
         let label: UILabel = UILabel(frame: .zero)
@@ -29,9 +29,9 @@ final class WeatherDetailTableViewCell: UITableViewCell, Reusable {
         return label
     }()
     
-    var cellModel: WeatherViewModelItem? {
+    var cellModel: WeatherDetailCellViewModel? {
         didSet {
-            guard let model = cellModel as? WeatherDetailViewModel else {
+            guard let model = cellModel else {
                 return
             }
             lblTitle.text = model.titleText
@@ -39,8 +39,8 @@ final class WeatherDetailTableViewCell: UITableViewCell, Reusable {
         }
     }
     
-    public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         setupUI()
     }
     required public init?(coder aDecoder: NSCoder) {
@@ -49,7 +49,6 @@ final class WeatherDetailTableViewCell: UITableViewCell, Reusable {
     
     private func setupUI() {
         
-        selectionStyle = .none
         contentView.addSubviews(lblTitle, lblValue)
         
         let marginGuide = contentView.layoutMarginsGuide

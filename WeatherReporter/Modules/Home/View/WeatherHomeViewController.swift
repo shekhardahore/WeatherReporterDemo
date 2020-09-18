@@ -27,11 +27,18 @@ final class WeatherHomeViewController: UIViewController, AlertDisplayable {
         return button
     }()
     
-    var tableView: WeatherTableView
+    var dataSource: UICollectionViewDiffableDataSource<Section, DataItem>! = nil
+        
+    var homeCollectionView: UICollectionView = {
+        var collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout.init())
+        collectionView.backgroundColor = .systemBackground
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
+        return collectionView
+    }()
     
     init(viewModel: WeatherHomeViewModel) {
         self.viewModel = viewModel
-        self.tableView = WeatherTableView(viewModel: self.viewModel.weatherTableViewViewModel)
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -62,9 +69,8 @@ final class WeatherHomeViewController: UIViewController, AlertDisplayable {
     func setupUI() {
         view.backgroundColor = .systemBackground
         showSpinner()
-        view.addSubviews(lblInfo, tableView, btnRefresh)
+        view.addSubviews(lblInfo, btnRefresh)
         btnRefresh.isHidden = true
-        tableView.isHidden = true
         
         let margin = view.layoutMarginsGuide
         NSLayoutConstraint.activate([
@@ -77,19 +83,9 @@ final class WeatherHomeViewController: UIViewController, AlertDisplayable {
             btnRefresh.leadingAnchor.constraint(equalTo: margin.leadingAnchor, constant: 20),
             btnRefresh.trailingAnchor.constraint(equalTo: margin.trailingAnchor, constant: -20),
             btnRefresh.heightAnchor.constraint(equalToConstant: 50),
-            
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
-    
-    /// Updates the UI with the weather data
-    func showWeather() {
-        tableView.isHidden = false
-    }
-    
+
     @objc func onRefresh(_ sender: UIButton) {
         viewModel.fetchWeatherForCurrentLocation()
         btnRefresh.isHidden = true

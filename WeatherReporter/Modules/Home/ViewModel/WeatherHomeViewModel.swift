@@ -9,30 +9,33 @@
 import Foundation
 import Moya
 
+enum DataItem: Hashable {
+    case summary(data: WeatherSummaryModel)
+    case details(data: WeatherDetailModel)
+}
+
 final class WeatherHomeViewModel {
     private let networkProvider: MoyaProvider<WeatherReporterService>
     private var locationProvider: LocationProvider
-    private(set) var weatherTableViewViewModel: WeatherTableViewViewModel
+    
     private var weatherModel: Weather? {
         didSet {
             self.weatherUpdated?()
-            self.weatherTableViewViewModel.weatherModel = self.weatherModel
         }
     }
+
     private(set) var alertMessage: String? {
         didSet {
-            self.weatherTableViewViewModel.weatherModel = self.weatherModel
             self.showAlertClosure?()
         }
     }
+    
     var showAlertClosure: (()->())?
     var weatherUpdated: (()->())?
 
     init(networkProvider: MoyaProvider<WeatherReporterService>, locationProvider: LocationProvider) {
         self.networkProvider = networkProvider
         self.locationProvider = locationProvider
-        self.weatherTableViewViewModel = WeatherTableViewViewModel()
-        weatherTableViewViewModel.weatherHomeViewModelDelegate = self
         self.locationProvider.delegate = self
     }
     
@@ -71,5 +74,29 @@ extension WeatherHomeViewModel: LocationServiceDelegate {
 extension WeatherHomeViewModel: WeatherHomeViewModelDelegate {
     func updateWeatherData() {
         fetchWeatherForCurrentLocation()
+    }
+}
+
+extension WeatherHomeViewModel {
+    
+    func getWeatherSummaryModel() -> WeatherSummaryModel {
+        return WeatherSummaryModel(data: self.weatherModel)
+    }
+
+    /// Generates model for the deatils section in WeatherTableView
+    /// - Returns: array of contating `DataItem` for the details section in WeatherTableView
+     func getWeatherDetailModels() -> [DataItem] {
+        var detailsViewModels: [DataItem] = []
+        guard let weather = weatherModel else {
+            return detailsViewModels
+        }
+        
+        let model = WeatherDetailModel(type: .feelsLike(value: weather.currently.apparentTemperature))
+        let model2 = WeatherDetailModel(type: .chanceOfPrecip(precipType: weather.currently.precipType, value: weather.currently.precipProbabilityPercentage))
+        let model3 = WeatherDetailModel(type: .humidity(value: weather.currently.humitdityPercentage))
+        let model4 = WeatherDetailModel(type: .wind(value: weather.currently.windSpeed))
+        
+        detailsViewModels = [.details(data: model2), .details(data: model3), .details(data: model4), .details(data: model)]        
+        return detailsViewModels
     }
 }

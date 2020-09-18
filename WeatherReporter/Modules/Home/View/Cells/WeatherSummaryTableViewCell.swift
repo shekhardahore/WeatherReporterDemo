@@ -8,7 +8,7 @@
 
 import UIKit
 
-final class WeatherSummaryTableViewCell: UITableViewCell, Reusable {
+final class WeatherSummaryTableViewCell: UICollectionViewCell, Reusable {
  
     private var lblSummary: UILabel = {
         let label: UILabel = UILabel(frame: .zero)
@@ -35,9 +35,9 @@ final class WeatherSummaryTableViewCell: UITableViewCell, Reusable {
         return label
     }()
     
-    var cellModel: WeatherViewModelItem? {
+    var cellModel: WeatherSummaryCellViewModel? {
         didSet {
-            guard let model = cellModel as? WeatherSummaryViewModel else {
+            guard let model = cellModel else {
                 return
             }
             lblSummary.text = model.summaryText
@@ -45,10 +45,10 @@ final class WeatherSummaryTableViewCell: UITableViewCell, Reusable {
             lblDate.text = model.dateText
         }
     }
-    
-    public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setupUI()
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+         setupUI()
     }
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -56,7 +56,6 @@ final class WeatherSummaryTableViewCell: UITableViewCell, Reusable {
     
     private func setupUI() {
         
-        selectionStyle = .none
         contentView.addSubviews(lblSummary, lblTemperature, lblDate)
 
         let marginGuide = contentView.layoutMarginsGuide
