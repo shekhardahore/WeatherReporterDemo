@@ -71,5 +71,7 @@ final class WeatherSummaryTableViewCell: UICollectionViewCell, Reusable {
             lblDate.topAnchor.constraint(equalTo: lblTemperature.bottomAnchor, constant: 16),
             lblDate.bottomAnchor.constraint(equalTo: marginGuide.bottomAnchor, constant: -32)
         ])
+        lblSummary.setContentHuggingPriority(.defaultHigh, for: .vertical)
+        lblTemperature.setContentHuggingPriority(.defaultHigh, for: .vertical)
     }
 }
